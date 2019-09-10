@@ -11,6 +11,7 @@
 
 /*** defines ***/
 
+#define KEDIT_VERSION "0.0.1"
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 /*** data ***/
@@ -119,15 +120,35 @@ void abFree(struct abuf *ab) {
 
 void editorDrawRows(struct abuf *ab) {
     int y;
-    for (y = 0; y < E.screenrows; y++) {
-        abAppend(ab, "~", 1);
 
+    for (y = 0; y < E.screenrows; y++) {
+        if (y == E.screenrows / 3) {
+            char welcome[80];
+            int welcomelen = snprintf(welcome, sizeof(welcome),
+                "Kedit editor -- version %s", KEDIT_VERSION);
+            
+            if (welcomelen > E.screencols){
+                welcomelen = E.screencols;
+            }
+            
+            int padding = (E.screencols - welcomelen) / 2;
+            if (padding) {
+                abAppend(ab, "~", 1);
+                padding--;
+            }
+            while (padding--) 
+                abAppend(ab, " ", 1);
+            abAppend(ab, welcome, welcomelen);
+        } else {
+            abAppend(ab, "~", 1);
+        }
         abAppend(ab, "\x1b[K", 3);
         if (y < E.screenrows - 1) {
             abAppend(ab, "\r\n", 2);
         }
     }
 }
+
 void editorRefreshScreen() {
     struct abuf ab = ABUF_INIT;
 
