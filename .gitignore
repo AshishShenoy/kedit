@@ -1,6 +1,7 @@
 # Project specific
 kedit
 .kedit.c.swp
+test.txt
 
 # IDE files
 .vscode
